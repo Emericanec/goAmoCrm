@@ -35,8 +35,9 @@ func (this Handler) Auth() (Token, error) {
 	values.Set("USER_HASH", this.Config.UserHash)
 	request.Body = strings.NewReader(values.Encode())
 	response := this.Request(request)
+
 	var err error
-	
+
 	if(response.StatusCode == OK){
 		cookieString := response.Header["Set-Cookie"][0]
 		if(cookieString != "") {
