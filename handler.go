@@ -6,8 +6,6 @@ import (
 	"strings"
 	"net/url"
 	"io"
-	"io/ioutil"
-	"encoding/json"
 )
 
 const OK = 200;
