@@ -35,16 +35,7 @@ func (this Handler) Auth() (Token, error) {
 	values.Set("USER_HASH", this.Config.UserHash)
 	request.Body = strings.NewReader(values.Encode())
 	response := this.Request(request)
-
-	body, err := ioutil.ReadAll(response.Body)
-	if(err != nil){
-		panic(err.Error())
-	}
-	var s interface{}
-	err = json.Unmarshal(body, &s)
-	if(err != nil){
-		panic(err.Error())
-	}
+	var err error
 	if(response.StatusCode == OK){
 		cookieString := response.Header["Set-Cookie"][0]
 		if(cookieString != "") {
