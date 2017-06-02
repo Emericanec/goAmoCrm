@@ -3,19 +3,12 @@ package goAmoCrm
 import (
 	"testing"
 	"fmt"
+	"github.com/emericanec/goAmoCrm/entity"
 )
 
 func TestRequest_CreateGetRequest(t *testing.T) {
-	var config = Config{
-		"yourdomain.amocrm.ru",
-		"yourLogin",
-		"yourApiKey",
-	}
-
-	var handler = Handler{
-		config,
-	}
-
-	token, _ := handler.Auth()
-	fmt.Println(token.Token)
+	amo := New("domain.amocrm.ru", "email@gmail.com", "YOUR TOKEN")
+	params := entity.ContactListParam{}
+	contacts := amo.Contacts.List(params)
+	fmt.Println(contacts)
 }

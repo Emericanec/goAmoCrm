@@ -7,19 +7,20 @@ import (
 
 func TestContact_Save(t *testing.T) {
 	var config = goAmoCrm.Config{
-		"yourdomain.amocrm.ru",
-		"yourLogin",
-		"yourApiKey",
+		"ebc.amocrm.ru",
+		"dinukov@exbico.ru",
+		"a89b3f1977893ae47556caf46acc800a",
 	}
 
 	var handler = goAmoCrm.Handler{
 		config,
+		goAmoCrm.Token{},
 	}
 
-	token, _ := handler.Auth()
+	handler.Auth()
 
 	var contact = Contact{}
 	contact.Name = "Walter White"
 	contact.CompanyName = "ЭБК"
-	contact.Save(handler, token.Token)
+	contact.Save(handler)
 }
