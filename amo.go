@@ -8,37 +8,35 @@ import (
 	"errors"
 )
 
-const OK = 200
+const (
+	HTTP_OK = 200
+	CONTACTS_PATH = "/private/api/v2/json/contacts"
+)
+
 
 type Amo struct {
 	Config   structures.Configure
 	Contacts structures.Contacts
 }
 
-func auth(configure structures.Configure) (string, error) {
-	var token string
-	var err error
+func auth(configure structures.Configure) ([]*http.Cookie, error) {
+	var cookie []*http.Cookie
 	values := url.Values{}
 	values.Set("USER_LOGIN", configure.Login)
 	values.Set("USER_HASH", configure.Hash)
 	body := strings.NewReader(values.Encode())
-	urlString := "https://" + configure.Url + "/private/api/auth.php"
-	var response *http.Response
-	response, err = http.Post(urlString, "application/x-www-form-urlencoded", body)
-	if response.StatusCode == OK {
-		cookieString := response.Header["Set-Cookie"][0]
-		if cookieString != "" {
-			stringArray := strings.Split(cookieString, ";")
-			sessionIdArray := strings.Split(stringArray[0], "=")
-			token = sessionIdArray[1]
-		}
+	urlString := configure.Url + "/private/api/auth.php"
+	response, err := http.Post(urlString, "application/x-www-form-urlencoded", body)
+	if response.StatusCode == HTTP_OK {
+		cookie = response.Cookies()
 	} else {
 		err = errors.New("Wrong http status: " + string(response.StatusCode))
 	}
-	return token, err
+	return cookie, err
 }
 
 func New(url, login, hash string) Amo {
+	var err error
 
 	config := structures.Configure{
 		Url:   url,
@@ -46,21 +44,20 @@ func New(url, login, hash string) Amo {
 		Hash:  hash,
 	}
 
-	token, err := auth(config)
+	structures.Cookie, err = auth(config)
 	if err != nil {
 		panic(err.Error())
 	}
 
-	config.Token = token
-
 	contacts := structures.Contacts{
 		Config: config,
-		Path:   "/private/api/v2/json/contacts",
+		Path:   CONTACTS_PATH,
 	}
 
 	amo := Amo{
 		config,
 		contacts,
 	}
+
 	return amo
 }
